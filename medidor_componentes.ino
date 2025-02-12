@@ -18,7 +18,6 @@ Serial.begin(9600);
 
 void loop() {
 int estado = digitalRead(modo);
-Serial.println(estado);
 if(estado==HIGH)
 {
  if(contador==5){
@@ -59,7 +58,10 @@ void probarComponentes(){
     // Código a ejecutar cuando variable es igual a valor2
     medir_voltaje(pinOut1,pinOut2,pinMedir1,pinMedir2);
     break;
-   
+   case 3:
+    // Código a ejecutar cuando variable es igual a valor2
+    determinar_bjt(pinOut1,pinOut2,pinOut3,pinMedir1,pinMedir2,pinMedir3);
+    break;
   // Puedes tener tantos casos como necesites.
   default:
     // Código a ejecutar si ninguno de los casos anteriores coincide.

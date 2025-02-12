@@ -1,7 +1,5 @@
-#include "HardwareSerial.h"
-
 #include "funciones.h"
-#include "Arduino.h"
+
 const float referencia=(5.0/1024.0);
 float lectura1= 0;
 float lectura2= 0;
@@ -55,6 +53,7 @@ bool determinarConfiguracion(int pinReferencia,int pin1in, int pin2in, int pin3i
 }
 
 bool probador_diodo(int pin1out,int pin2out, int pin1in,int pin2in){
+  lcd.clear();
   digitalWrite(pin1out, HIGH);
   digitalWrite(pin2out, LOW);
   delay(5);
@@ -66,13 +65,14 @@ bool probador_diodo(int pin1out,int pin2out, int pin1in,int pin2in){
  
   //Probar si es un diodo ZENER
   if(voltaje_diodo>2&&voltaje_diodo<4.7){
-    Serial.println("Es un diodo zener");
-    Serial.print("A:" );
-    Serial.println(pin1in);
-    Serial.print("C:");
-    Serial.println(pin2in);
-    Serial.print("Voltaje zener: ");
-    Serial.println(voltaje_diodo);
+    lcd.print("Diodo zener");
+    lcd.setCursor(0,1);
+    lcd.print("A:");
+    lcd.print(pin1in);
+    lcd.print("C:");
+    lcd.print(pin2in);
+    lcd.print("Voltaje zener: ");
+    lcd.print(voltaje_diodo);
     return true;
   }
  digitalWrite(pin1out, LOW);
@@ -85,23 +85,25 @@ bool probador_diodo(int pin1out,int pin2out, int pin1in,int pin2in){
   voltaje_diodo=abs(voltaje1-voltaje2);
   
    if(voltaje_diodo>2&&voltaje_diodo<4.7){
-    Serial.println("Es un diodo zener");
-    Serial.print("A:" );
-    Serial.println(pin2in);
-    Serial.print("C:");
-    Serial.println(pin1in);
-    Serial.print("Voltaje zener: ");
-    Serial.println(voltaje_diodo);
+    lcd.print("Es un diodo zener");
+    lcd.setCursor(0,1);
+    lcd.print("A:" );
+    lcd.print(pin2in);
+    lcd.print("C:");
+    lcd.print(pin1in);
+    lcd.print("Voltaje zener: ");
+    lcd.print(voltaje_diodo);
     return true;
   }
  
   
    if(0.6<voltaje_diodo &&  voltaje_diodo <0.8) {
-      Serial.print("C:" );
-      Serial.println(pin1in);
-     
-     Serial.print("A:");
-      Serial.println(pin2in);
+      lcd.print("Es un diodo");
+      lcd.setCursor(0,1);
+      lcd.print("C:" );
+      lcd.print(pin1in);
+      lcd.print("A:");
+      lcd.print(pin2in);
       return true;
      } 
       digitalWrite(pin1out, HIGH);
@@ -112,35 +114,39 @@ bool probador_diodo(int pin1out,int pin2out, int pin1in,int pin2in){
     voltaje1=lectura1*referencia;
     voltaje2=lectura2*referencia;
      voltaje_diodo=-voltaje1+voltaje2;
-    Serial.println(voltaje_diodo);
+    lcd.print(voltaje_diodo);
      if(0.6<voltaje_diodo &&  voltaje_diodo <0.8 ) {
-      Serial.print("A:" );
-      Serial.println(pin1in);
-       Serial.print("C:");
-      Serial.println(pin2in);
+      lcd.print("Es un diodo");
+      lcd.setCursor(0,1);
+      lcd.print("A:" );
+      lcd.print(pin1in);
+       lcd.print("C:");
+      lcd.print(pin2in);
       return true;
      } 
-     Serial.println("No es un diodo");
+     lcd.print("No es un diodo");
      digitalWrite(pin1out, LOW);
   digitalWrite(pin2out, LOW);
      return false;
 
 }
 void medir_resistencia(int pin1out,int pin2out, int pin1in){
+  lcd.clear();
   digitalWrite(pin1out, HIGH);
   digitalWrite(pin2out, LOW);
   delay(5);
   lectura1= analogRead(pin1in);
   voltaje1=lectura1*referencia;
-  Serial.println(voltaje1);
+  lcd.print(voltaje1);
   float resistencia=(5000-2000*voltaje1)/(voltaje1-5);
-  Serial.print("Resistencia medida: ");
-  Serial.print(resistencia);
-  Serial.println("Ω");
+  lcd.print("Resistencia medida: ");
+  lcd.print(resistencia);
+  lcd.print("Ω");
   digitalWrite(pin1out, LOW);
   digitalWrite(pin2out, LOW);  
 }
 void medir_voltaje(int pin1out,int pin2out, int pin1in,int pin2in){
+  lcd.clear();
   pinMode(pin1out, INPUT);
   pinMode(pin2out, INPUT);
   pinMode(pin2in, OUTPUT);
@@ -148,8 +154,8 @@ void medir_voltaje(int pin1out,int pin2out, int pin1in,int pin2in){
   delay(5);
   lectura1=analogRead(pin1in);
   voltaje1=lectura1*referencia;
-  Serial.print(" Voltaje medido: ");
-  Serial.println(voltaje1);
+  lcd.print("Voltaje medido: ");
+  lcd.print(voltaje1);
   pinMode(pin1out, OUTPUT);
   pinMode(pin1out, OUTPUT);
   pinMode(pin2in, INPUT);
@@ -158,15 +164,15 @@ void medir_voltaje(int pin1out,int pin2out, int pin1in,int pin2in){
 
 
 void determinar_bjt(int pin1out, int pin2out, int pin3out, int pin1in, int pin2in, int pin3in) {
-    Serial.println("Determinar BJT");
-    float beta=0;
+    lcd.clear();
+     float beta=0;
     float voltaje_prueba = 0;
     float voltaje_prueba1 = 0;
 
     for (int i = 0; i < 3; i++) {
         switch (i) {
             case 0:
-                Serial.println("Primer caso");
+                
 
                 digitalWrite(pin1out, HIGH);
                 pinMode(pin2out, LOW);
@@ -187,39 +193,39 @@ void determinar_bjt(int pin1out, int pin2out, int pin3out, int pin1in, int pin2i
 
                 if (0.6 < voltaje_prueba && voltaje_prueba < 0.9) {
                    
-                    Serial.println("Es un NPN con la siguiente configuración:");
+                    lcd.print("Es un NPN con la siguiente configuración:");
+                    lcd.setCursor(0, 1);
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
-                        Serial.println("BEC");
+                        lcd.print("BEC. ");
                         beta=(5-voltaje3)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     } else {
-                        Serial.println("BCE");
+                        lcd.print("BCE. ");
                         beta=(5-voltaje2)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     }
                                         return;
 
                 } else if (-0.9 < voltaje_prueba && voltaje_prueba < -0.6) {
-                    Serial.println("Es un PNP con la siguiente configuración:");
+                    lcd.print("Es un PNP con la siguiente configuración:");
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
-                        Serial.println("BEC");
+                        lcd.print("BEC. ");
                         beta=(5+voltaje3)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     } else {
-                        Serial.println("BCE");
+                        lcd.print("BCE. ");
                          beta=(5+voltaje1)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     }
                     return;
                 }
                 break;
 
             case 1:
-                Serial.println("Segundo caso");
 
                 digitalWrite(pin1out, LOW);
                 digitalWrite(pin2out, HIGH);
@@ -235,46 +241,39 @@ void determinar_bjt(int pin1out, int pin2out, int pin3out, int pin1in, int pin2i
                 voltaje_prueba = voltaje1 - voltaje2;
                 voltaje_prueba1 = voltaje1 - voltaje3;
 
-                Serial.println(voltaje1);
-                Serial.println(voltaje2);
-                Serial.println(voltaje3);
-                Serial.println(voltaje_prueba1);
-                Serial.println(voltaje_prueba);
-
                 if (0.6 < voltaje_prueba && voltaje_prueba < 0.9) {
-                    Serial.println("Es un NPN con la siguiente configuración:");
+                    lcd.print("Es un NPN con la siguiente configuración: ");
+                    lcd.setCursor(0, 1);
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
-                        Serial.println("CBE");
+                        lcd.print("CBE. ");
                          beta=(5-voltaje3)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     } else {
-                        Serial.println("EBC");
+                        lcd.print("EBC. ");
                          beta=(5-voltaje2)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     }
                     return;
                 } else if (-0.9 < voltaje_prueba1 && voltaje_prueba1 < -0.6) {
-                    Serial.println("Es un PNP con la siguiente configuración:");
+                    lcd.print("Es un PNP con la siguiente configuración:");
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
-                        Serial.println("CBE");
+                        lcd.print("CBE. ");
                          beta=(5+voltaje3)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     } else {
-                        Serial.println("EBC");
+                        lcd.print("EBC. ");
                          beta=(5+voltaje2)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     }
                     return;
                 }
                 break;
 
             case 2:
-                Serial.println("Tercer caso");
-
                 digitalWrite(pin1out, LOW);
                 digitalWrite(pin2out, LOW);
                 digitalWrite(pin3out, HIGH);
@@ -289,49 +288,46 @@ void determinar_bjt(int pin1out, int pin2out, int pin3out, int pin1in, int pin2i
                 voltaje_prueba = voltaje1 - voltaje2;
                 voltaje_prueba1 = voltaje1 - voltaje3;
 
-                Serial.println(voltaje1);
-                Serial.println(voltaje2);
-                Serial.println(voltaje3);
-                Serial.println(voltaje_prueba1);
-                Serial.println(voltaje_prueba);
-
                 if (0.6 < voltaje_prueba && voltaje_prueba < 0.9) {
-                    Serial.println("Es un NPN con la siguiente configuración:");
+                    lcd.print("Es un NPN con la siguiente configuración:");
+                    lcd.setCursor(0, 1);
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
-                        Serial.println("CEB");
+                        lcd.print("CEB. ");
                          beta=(5-voltaje3)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     } else {
-                        Serial.println("ECB");
+                        lcd.print("ECB. ");
                          beta=(5-voltaje2)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     }
                                         return;
 
                 } else if (-0.9 < voltaje_prueba1 && voltaje_prueba1 < -0.6) {
-                    Serial.println("Es un PNP con la siguiente configuración:");
+                    lcd.print("PNP configuración: ");
+                    lcd.setCursor(0, 1);
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
-                        Serial.println("CEB");
+                        lcd.print("CEB. ");
                          beta=(5+voltaje3)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     } else {
-                        Serial.println("ECB");
+                        lcd.print("ECB. ");
                          beta=(5+voltaje2)/(5-voltaje1);
-                         Serial.print("Beta: ");
-                         Serial.print(beta);
+                         lcd.print("Beta: ");
+                         lcd.print(beta);
                     }
                     return;
                 }
                 break;
 
             default:
-                Serial.println("No se pudo determinar si es un BJT");
+                lcd.setCursor(0, 1);
+                lcd.print("No se pudo determinar si es un BJT");
                 break;
         }
     }
-    delay(1000);
+    delay(4);
 }
 

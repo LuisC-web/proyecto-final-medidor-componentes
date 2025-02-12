@@ -1,5 +1,9 @@
 #include"funciones.h"
-//Pines para medicion
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+
+// Create LCD object and map to the assigned pins
+LiquidCrystal_I2C lcd(0x3F, 16, 2);  // Ajusta la dirección y tamaño según tu pantalla//Pines para medicion
 const int pinMedir1=A0;
 const int pinMedir2=A1;
 const int pinMedir3=A2;
@@ -11,8 +15,15 @@ const int pinOut3=5;
 const int modo=4;
 //contador_modo
 int contador=0;
+
+ //0x20 adalah alamat i2c PCF8574 di proteus v
 void setup() {
 inicializar();
+lcd.init();
+lcd.backlight();
+lcd.print("Medidor de componentes");
+lcd.setCursor(0, 1);
+lcd.print("Proyecto final");
 Serial.begin(9600);
 }
 

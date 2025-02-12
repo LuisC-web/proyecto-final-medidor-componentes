@@ -2,6 +2,7 @@
 
 #include "funciones.h"
 #include "Arduino.h"
+ const float referencia=(5.0/1023.0);
 bool determinarConfiguracion(int pinReferencia,int pin1in, int pin2in, int pin3in, int pin1, int pin2, int pin3) {
     // Activamos los pines de salida
     digitalWrite(pin1, HIGH);
@@ -51,7 +52,6 @@ bool probador_diodo(int pin1out,int pin2out, int pin1in,int pin2in){
   digitalWrite(pin1out, HIGH);
   digitalWrite(pin2out, LOW);
   delay(5);
-  float referencia=(5.0/1023.0);
   int lectura1= analogRead(pin1in);
   int lectura2= analogRead(pin2in);
   float voltaje1=lectura1*referencia;
@@ -115,5 +115,19 @@ bool probador_diodo(int pin1out,int pin2out, int pin1in,int pin2in){
      digitalWrite(pin1out, LOW);
   digitalWrite(pin2out, LOW);
      return false;
+
+}
+void medir_resistencia(int pin1out,int pin2out, int pin1in){
+  digitalWrite(pin1out, LOW);
+  digitalWrite(pin2out, HIGH);
+  delay(5);
+   int lectura1= analogRead(pin1in);
+  float voltaje1=lectura1*referencia;
+  Serial.println(voltaje1);
+  float resistencia=(5000-2000*voltaje1)/(voltaje1-5);
+  Serial.print("Resistencia medida: ");
+  Serial.print(resistencia);
+  Serial.println("Ω");
+
 
 }

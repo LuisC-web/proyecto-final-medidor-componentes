@@ -9,6 +9,8 @@ extern String configuracion;  // Crea un String con el valor "ABC"
 
 bool determinarConfiguracion(int pinReferencia,int pin1in,int pin2in, int pin3in,int pin1, int pin2,int pin3);
 bool probador_diodo(int pin1out,int pin2out, int pin1in,int pin2in);
+void medir_resistencia(int pin1out,int pin2out, int pin1in);
+
 
 
 

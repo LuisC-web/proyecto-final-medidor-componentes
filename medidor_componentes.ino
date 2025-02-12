@@ -50,13 +50,16 @@ void probarComponentes(){
  
  switch (contador) {
   case 0:
-    // Código a ejecutar cuando variable es igual a valor1
     probador_diodo(pinOut1,pinOut2,pinMedir1,pinMedir2);
     break;
   case 1:
-    // Código a ejecutar cuando variable es igual a valor2
     medir_resistencia(pinOut1,pinOut2,pinMedir1);
     break;
+    case 2:
+    // Código a ejecutar cuando variable es igual a valor2
+    medir_voltaje(pinOut1,pinOut2,pinMedir1,pinMedir2);
+    break;
+   
   // Puedes tener tantos casos como necesites.
   default:
     // Código a ejecutar si ninguno de los casos anteriores coincide.

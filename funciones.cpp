@@ -2,7 +2,12 @@
 
 #include "funciones.h"
 #include "Arduino.h"
- const float referencia=(5.0/1023.0);
+const float referencia=(5.0/1023.0);
+int lectura1= 0;
+int lectura2= 0;
+float voltaje1=0;
+float voltaje2=0;
+
 bool determinarConfiguracion(int pinReferencia,int pin1in, int pin2in, int pin3in, int pin1, int pin2, int pin3) {
     // Activamos los pines de salida
     digitalWrite(pin1, HIGH);
@@ -52,10 +57,10 @@ bool probador_diodo(int pin1out,int pin2out, int pin1in,int pin2in){
   digitalWrite(pin1out, HIGH);
   digitalWrite(pin2out, LOW);
   delay(5);
-  int lectura1= analogRead(pin1in);
-  int lectura2= analogRead(pin2in);
-  float voltaje1=lectura1*referencia;
-  float voltaje2=lectura2*referencia;
+  lectura1= analogRead(pin1in);
+  lectura2= analogRead(pin2in);
+  voltaje1=lectura1*referencia;
+  voltaje2=lectura2*referencia;
   float voltaje_diodo=abs(-voltaje1+voltaje2);
  
   //Probar si es un diodo ZENER
@@ -121,13 +126,27 @@ void medir_resistencia(int pin1out,int pin2out, int pin1in){
   digitalWrite(pin1out, LOW);
   digitalWrite(pin2out, HIGH);
   delay(5);
-   int lectura1= analogRead(pin1in);
-  float voltaje1=lectura1*referencia;
+  lectura1= analogRead(pin1in);
+  voltaje1=lectura1*referencia;
   Serial.println(voltaje1);
   float resistencia=(5000-2000*voltaje1)/(voltaje1-5);
   Serial.print("Resistencia medida: ");
   Serial.print(resistencia);
   Serial.println("Ω");
-
-
+  digitalWrite(pin1out, LOW);
+  digitalWrite(pin2out, LOW);  
+}
+void medir_voltaje(int pin1out,int pin2out, int pin1in,int pin2in){
+  pinMode(pin1out, INPUT);
+  pinMode(pin2out, INPUT);
+  pinMode(pin1in, OUTPUT);
+  digitalWrite(pin1in, LOW);
+  delay(5);
+  lectura1=analogRead(pin2in);
+  voltaje1=lectura1*referencia;
+  Serial.print(" Voltaje medido: ");
+  Serial.println(voltaje1);
+  pinMode(pin1out, OUTPUT);
+  pinMode(pin1out, OUTPUT);
+  pinMode(pin1in, INPUT);
 }

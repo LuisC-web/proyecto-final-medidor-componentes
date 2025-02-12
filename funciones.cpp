@@ -159,6 +159,7 @@ void medir_voltaje(int pin1out,int pin2out, int pin1in,int pin2in){
 
 void determinar_bjt(int pin1out, int pin2out, int pin3out, int pin1in, int pin2in, int pin3in) {
     Serial.println("Determinar BJT");
+    float beta=0;
     float voltaje_prueba = 0;
     float voltaje_prueba1 = 0;
 
@@ -180,19 +181,23 @@ void determinar_bjt(int pin1out, int pin2out, int pin3out, int pin1in, int pin2i
 
                 voltaje_prueba = voltaje1 - voltaje2;
                 voltaje_prueba1 = voltaje1 - voltaje3;
+                
 
-                Serial.println(voltaje1,4);
-                Serial.println(voltaje2,4);
-                Serial.println(voltaje3,4);
-                Serial.println(voltaje_prueba1,4);
-                Serial.println(voltaje_prueba,4);
+               
 
                 if (0.6 < voltaje_prueba && voltaje_prueba < 0.9) {
+                   
                     Serial.println("Es un NPN con la siguiente configuración:");
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
                         Serial.println("BEC");
+                        beta=(5-voltaje3)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     } else {
                         Serial.println("BCE");
+                        beta=(5-voltaje2)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     }
                                         return;
 
@@ -200,8 +205,14 @@ void determinar_bjt(int pin1out, int pin2out, int pin3out, int pin1in, int pin2i
                     Serial.println("Es un PNP con la siguiente configuración:");
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
                         Serial.println("BEC");
+                        beta=(5+voltaje3)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     } else {
                         Serial.println("BCE");
+                         beta=(5+voltaje1)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     }
                     return;
                 }
@@ -234,16 +245,28 @@ void determinar_bjt(int pin1out, int pin2out, int pin3out, int pin1in, int pin2i
                     Serial.println("Es un NPN con la siguiente configuración:");
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
                         Serial.println("CBE");
+                         beta=(5-voltaje3)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     } else {
                         Serial.println("EBC");
+                         beta=(5-voltaje2)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     }
                     return;
                 } else if (-0.9 < voltaje_prueba1 && voltaje_prueba1 < -0.6) {
                     Serial.println("Es un PNP con la siguiente configuración:");
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
                         Serial.println("CBE");
+                         beta=(5+voltaje3)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     } else {
                         Serial.println("EBC");
+                         beta=(5+voltaje2)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     }
                     return;
                 }
@@ -276,8 +299,14 @@ void determinar_bjt(int pin1out, int pin2out, int pin3out, int pin1in, int pin2i
                     Serial.println("Es un NPN con la siguiente configuración:");
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
                         Serial.println("CEB");
+                         beta=(5-voltaje3)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     } else {
                         Serial.println("ECB");
+                         beta=(5-voltaje2)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     }
                                         return;
 
@@ -285,8 +314,14 @@ void determinar_bjt(int pin1out, int pin2out, int pin3out, int pin1in, int pin2i
                     Serial.println("Es un PNP con la siguiente configuración:");
                     if (abs(voltaje_prueba) > abs(voltaje_prueba1)) {
                         Serial.println("CEB");
+                         beta=(5+voltaje3)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     } else {
                         Serial.println("ECB");
+                         beta=(5+voltaje2)/(5-voltaje1);
+                         Serial.print("Beta: ");
+                         Serial.print(beta);
                     }
                     return;
                 }
